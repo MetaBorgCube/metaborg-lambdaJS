@@ -3,9 +3,9 @@ module Expression
 context-free syntax
 
 	//Fig 1
-	Exp.Identifier =
-	Exp.Value =
-	Exp.Let = < let ( XPLACEHOLDER = <Exp> ) <Exp> >	
+	Exp.Identifier = < <ID> >
+	Exp.Value = < <Val> >
+	Exp.Let = < let ( <ID> = <Exp> ) <Exp> >	
 	Exp.FunctionCall = < <Exp> ( <Exp>* ) >
 	Exp.Get = < <Exp> [ <Exp> ] >
 	Exp.Instantiation = < <Exp> [ <Exp> ] = <Exp> >

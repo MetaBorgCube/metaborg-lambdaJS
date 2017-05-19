@@ -12,4 +12,4 @@ context-free start-symbols
 
 context-free syntax
   
-  Start.Empty = <>
+  Start.Program = <>
