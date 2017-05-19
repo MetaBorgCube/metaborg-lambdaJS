@@ -1,5 +1,11 @@
 module Expression
 
+imports
+  
+  Common
+  Lexical
+  Value
+
 context-free syntax
 
 	//Fig 1
