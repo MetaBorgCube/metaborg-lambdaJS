@@ -1,5 +1,0 @@
-module signatures/Statement-sig
-
-signature
-  constructors
-    

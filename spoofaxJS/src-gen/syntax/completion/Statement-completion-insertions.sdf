@@ -1,6 +1,0 @@
-module completion/Statement-completion-insertions
-imports Statement
-
-exports
-  lexical syntax
-     -> COMPLETION-INSERTION 

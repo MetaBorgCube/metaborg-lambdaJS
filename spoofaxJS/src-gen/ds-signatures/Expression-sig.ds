@@ -1,4 +1,0 @@
-module ds-signatures/Expression-sig
-
-signature
-    sorts

@@ -1,9 +1,0 @@
-module completion/Statement-cp
-
-imports
-  libstratego-gpp
-  libspoofax/editor/completion/-
-
-
-imports
-  signatures/Statement-sig

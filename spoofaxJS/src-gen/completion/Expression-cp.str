@@ -1,9 +1,0 @@
-module completion/Expression-cp
-
-imports
-  libstratego-gpp
-  libspoofax/editor/completion/-
-
-
-imports
-  signatures/Expression-sig

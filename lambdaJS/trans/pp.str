@@ -1,0 +1,49 @@
+module pp
+
+imports
+
+  libstratego-gpp
+  libspoofax/sdf/pp
+  libspoofax/editor/refactoring/-
+  pp/lambdaJS-parenthesize
+  pp/lambdaJS-pp
+
+rules
+
+  editor-format:
+    (node, _, ast, path, project-path) -> (filename, result)
+    with
+      ext      := <get-extension> path
+    ; filename := <guarantee-extension(|$[pp.[ext]])> path
+    ; result   := <pp-debug> node
+
+rules
+  
+  pp-lambdaJS-string =
+    parenthesize-lambdaJS
+    ; prettyprint-lambdaJS-start-symbols
+    ; !V([], <id>)
+    ; box2text-string(|120)
+      
+  pp-partial-lambdaJS-string =
+    parenthesize-lambdaJS
+    ; prettyprint-lambdaJS
+    ; !V([], <id>)
+    ; box2text-string(|120)
+    
+  pp-partial-lambdaJS-string(|sort) =
+    parenthesize-lambdaJS
+    ; prettyprint-lambdaJS(|sort)
+    ; !V([], <id>)
+    ; box2text-string(|120)  
+      
+  pp-debug :
+    ast -> result
+    with
+       result := <pp-lambdaJS-string> ast
+    <+ <bottomup(try(not(is-string); not(is-list); not(pp-lambdaJS-string); debug(!"cannot pp ")))> ast
+    ;  result := ""
+
+rules
+  
+  construct-textual-change = construct-textual-change(pp-partial-lambdaJS-string, parenthesize, override-reconstruction, resugar)

@@ -1,4 +1,0 @@
-module ds-signatures/Statement-sig
-
-signature
-    sorts
