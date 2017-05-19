@@ -1,1 +1,17 @@
 module Expression
+
+context-free syntax
+
+	//Fig 1
+	Exp.Identifier = < <ID> >
+	Exp.Value = < <Val> >
+	Exp.Let = < let ( <ID> = <Exp> ) <Exp> >	
+	Exp.FunctionCall = < <Exp> ( <Exp>* ) >
+	Exp.Get = < <Exp> [ <Exp> ] >
+	Exp.Instantiation = < <Exp> [ <Exp> ] = <Exp> >
+	Exp.Delete = < delete <Exp> [ <Exp> ] >
+	
+	//Fig 2
+	Exp.Assign = < <Exp> = <Exp> >
+	Exp.Ref = < ref <Exp> >
+	Exp.Deref = < deref <Exp> >
