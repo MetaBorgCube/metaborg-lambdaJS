@@ -1,0 +1,15 @@
+module Value
+
+imports
+  
+  Common
+  Expression
+  Lexical
+
+context-free syntax
+  
+  Val.C = < <C> >
+  Val.Func = < func( <ID>* ) { return <Exp> }>
+  Val.Obj = < { <Field>* } >
+  
+  Field.Value = < <ID> : <Val> >
