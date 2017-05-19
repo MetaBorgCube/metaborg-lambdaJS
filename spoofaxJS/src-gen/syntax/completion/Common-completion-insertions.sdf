@@ -1,0 +1,6 @@
+module completion/Common-completion-insertions
+imports Common
+
+exports
+  lexical syntax
+     -> COMPLETION-INSERTION 

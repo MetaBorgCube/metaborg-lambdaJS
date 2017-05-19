@@ -1,0 +1,18 @@
+module spoofaxJS
+imports Common Expression Lexical Statement
+
+exports
+  context-free start-symbols
+    Start
+
+  context-free syntax
+     -> Start {cons("Program")}
+
+  lexical syntax
+    
+
+  context-free syntax
+    "$Start" -> Start {cons("Start-Plhdr"), placeholder}
+
+  lexical restrictions
+    "$Start" -/- [a-zA-Z]

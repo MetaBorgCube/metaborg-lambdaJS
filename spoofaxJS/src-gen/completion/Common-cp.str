@@ -1,0 +1,9 @@
+module completion/Common-cp
+
+imports
+  libstratego-gpp
+  libspoofax/editor/completion/-
+
+
+imports
+  signatures/Common-sig

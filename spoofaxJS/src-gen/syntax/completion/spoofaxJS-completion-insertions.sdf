@@ -1,0 +1,18 @@
+module completion/spoofaxJS-completion-insertions
+imports spoofaxJS
+
+imports completion/Common-completion-insertions
+        completion/Expression-completion-insertions
+        completion/Lexical-completion-insertions
+        completion/Statement-completion-insertions
+
+exports
+  context-free start-symbols
+    Start
+
+  context-free syntax
+    COMPLETION-INSERTION -> Start {cons("Start-Plhdr"), placeholder-insertion}
+
+exports
+  lexical syntax
+     -> COMPLETION-INSERTION 

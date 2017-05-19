@@ -1,0 +1,13 @@
+module pp/spoofaxJS-parenthesize
+
+imports
+  libstratego-lib
+
+
+strategies
+  io-spoofaxJS-parenthesize =
+    io-wrap(id)
+
+  parenthesize-spoofaxJS =
+    id
+

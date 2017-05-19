@@ -1,0 +1,10 @@
+module completion/colorer/spoofaxJS-cc-esv
+
+imports
+  completion/colorer/Common-cc-esv
+  completion/colorer/Expression-cc-esv
+  completion/colorer/Lexical-cc-esv
+  completion/colorer/Statement-cc-esv
+
+colorer
+  _.Start-Plhdr : gray   

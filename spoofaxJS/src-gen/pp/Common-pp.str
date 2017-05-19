@@ -1,0 +1,27 @@
+module pp/Common-pp
+
+imports
+  libstratego-gpp
+  libspoofax/sdf/pp
+  libspoofax/term/origin
+  libstratego-sglr
+  signatures/Common-sig
+
+
+strategies
+  prettyprint-example =
+    prettyprint-spoofaxJS
+
+  prettyprint-spoofaxJS =
+    fail
+
+  prettyprint-spoofaxJS(|sort) =
+    fail
+
+
+strategies
+  prettyprint-SDF-start-symbols =
+    prettyprint-spoofaxJS-start-symbols
+
+  prettyprint-spoofaxJS-start-symbols =
+    fail

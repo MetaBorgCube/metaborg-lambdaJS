@@ -1,0 +1,6 @@
+module completion/Lexical-completion-insertions
+imports Lexical
+
+exports
+  lexical syntax
+     -> COMPLETION-INSERTION 

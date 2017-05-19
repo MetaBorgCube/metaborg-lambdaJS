@@ -1,0 +1,9 @@
+module ds-signatures/spoofaxJS-sig
+
+imports ds-signatures/Common-sig ds-signatures/Expression-sig ds-signatures/Lexical-sig ds-signatures/Statement-sig
+
+signature
+    sorts
+      Start
+    constructors
+      Program : Start 

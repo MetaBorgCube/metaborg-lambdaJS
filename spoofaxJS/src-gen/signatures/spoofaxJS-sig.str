@@ -1,0 +1,15 @@
+module signatures/spoofaxJS-sig
+
+imports
+  signatures/Common-sig
+  signatures/Expression-sig
+  signatures/Lexical-sig
+  signatures/Statement-sig
+
+
+signature
+  constructors
+    Program         : Start
+    Start-Plhdr     : Start
+    Start-Plhdr     : COMPLETION-INSERTION -> Start
+    Start-Opt-Plhdr : Start
