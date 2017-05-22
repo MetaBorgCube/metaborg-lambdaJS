@@ -1,0 +1,4 @@
+module trans/lambdaJS
+
+imports
+src-gen/ds-signatures/lambdaJS-sig
