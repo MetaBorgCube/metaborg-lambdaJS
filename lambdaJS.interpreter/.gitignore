@@ -1,0 +1,15 @@
+
+/target/
+src/main/resources/specification.aterm
+src/main/resources/parsetable.tbl
+src/main/java/org/metaborg/lambdaJS/interpreter/generated
+src/main/java/org/metaborg/lambdaJS/interpreter/generated/terms
+src/main/java/org/metaborg/lambdaJS/interpreter/generated/terms/build
+src/main/java/org/metaborg/lambdaJS/interpreter/generated/terms/match
+src/test/java/org/metaborg/lambdaJS/interpreter/generated/test
+/lambdaJS.launch
+/TestlambdaJS.launch
+/lambdaJS (Daemon).launch
+/lambdaJS-server
+/lambdaJS-client
+/lambdaJS
