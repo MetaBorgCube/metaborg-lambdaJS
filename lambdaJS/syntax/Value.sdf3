@@ -9,7 +9,7 @@ imports
 context-free syntax
   
   Val.C = < <C> >
-  Val.Func = < func( <ID>* ) { return <Exp> }>
-  Val.Obj = < { <Field>* } >
+  Val.Func = < func( <ID*> ) return { <Exp> }>
+  Val.Obj = < { <Field*> } >
   
-  Field.Value = < <ID> : <Val> >
+  Field.Value = < <ID> : <Val> > 
