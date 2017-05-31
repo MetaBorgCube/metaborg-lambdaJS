@@ -1,0 +1,12 @@
+module testval
+
+language lambdaJS
+
+test true[[
+	true
+]] parse succeeds
+
+test false[[
+	false
+]] parse succeeds
+

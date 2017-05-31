@@ -1,0 +1,28 @@
+module testexp
+
+language lambdaJS
+
+//Assign
+test assign number [[
+	x = 9
+]] parse succeeds
+
+test assign true [[
+	x = true
+]] parse succeeds
+
+test assign number [[
+	x = false
+]] parse succeeds
+
+test assign val [[
+	x = y
+]] parse succeeds
+
+test refsucceed [[
+	ref x
+]] parse succeeds
+
+test derefsucceed [[
+	deref x
+]] parse succeeds

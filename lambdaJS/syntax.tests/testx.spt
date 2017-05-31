@@ -1,0 +1,108 @@
+module testx
+
+language lambdaJS
+
+//Letters
+test single letter[[
+	a
+]] parse succeeds
+
+test two letters[[
+	ab
+]] parse succeeds
+
+test three letters[[
+	abc
+]] parse succeeds
+
+test aB_ [[
+	aB_
+]] parse succeeds
+
+test a_B [[
+	a_B
+]] parse succeeds
+
+test a$B [[
+	a$B
+]] parse succeeds
+
+test aB$ [[
+	aB$
+]] parse succeeds
+
+//Capitals
+test single capital[[
+	A
+]] parse succeeds
+
+test two capitals[[
+	AB
+]] parse succeeds
+
+test three capitals[[
+	ABC
+]] parse succeeds
+
+
+//Underscores
+test single underscore[[
+	_
+]] parse succeeds
+
+test two underscores[[
+	__
+]] parse succeeds
+
+test three underscores[[
+	___
+]] parse succeeds
+
+
+//Dollars
+test single dollar[[
+	$
+]] parse succeeds
+
+test two dollars[[
+	$$
+]] parse succeeds
+
+test three dollars[[
+	$$$
+]] parse succeeds
+
+//Invalid Identifiers
+test invalid %a[[
+	%a
+]] parse fails
+
+test invalid a%[[
+	%a
+]] parse fails
+
+
+//Reserved Identifiers
+test invalid let[[
+	let
+]] parse fails
+
+test invalid func[[
+	func
+]] parse fails
+
+test invalid return[[
+	return
+]] parse fails
+
+test invalid ref[[
+	delete
+]] parse fails
+
+test invalid ref[[
+	ref
+]] parse fails
+
+test invalid deref[[
+	deref
+]] parse fails
