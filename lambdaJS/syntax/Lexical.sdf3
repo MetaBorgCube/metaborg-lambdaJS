@@ -29,6 +29,20 @@ lexical syntax
   NewLineEOF     = [\n\r] 
   NewLineEOF     = EOF 
   EOF            =  
+  
+  //Check for reserved values
+  ID = KEYWORD {reject}
+	KEYWORD = "false"
+	KEYWORD = "true"
+	
+	KEYWORD = "let"
+	KEYWORD = "func"
+	KEYWORD = "return"
+	
+	KEYWORD = "delete"
+	
+	KEYWORD = "ref"
+	KEYWORD = "deref"
 
 lexical restrictions
 
@@ -45,3 +59,6 @@ lexical restrictions
   // Backslash chars in strings may not be followed by " 
   
   BackSlashChar -/- [\"]
+
+  
+  
