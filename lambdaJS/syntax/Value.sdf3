@@ -9,7 +9,11 @@ imports
 context-free syntax
   
   Val.C = < <C> >
-  Val.Func = < func( <ID*> ) return { <Exp> }>
-  Val.Obj = < { <Field*> } >
+  Val.Func = < func( <ID*> ) { return <Exp> }>
+  Val.Obj = < { <FieldList> } >
   
-  Field.Value = < <ID> : <Val> > 
+  FieldList.Empty = 
+  FieldList.NonEmpty = < <Field> <FieldRest*> >
+  
+  Field.Prop = < <STRING> : <Val> > 
+  FieldRest.PropRest = < , <STRING> : <Val> > 
