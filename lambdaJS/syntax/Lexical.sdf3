@@ -34,6 +34,8 @@ lexical syntax
   ID = KEYWORD {reject}
 	KEYWORD = "false"
 	KEYWORD = "true"
+	KEYWORD = "undefined"
+	KEYWORD = "null"
 	
 	KEYWORD = "let"
 	KEYWORD = "func"

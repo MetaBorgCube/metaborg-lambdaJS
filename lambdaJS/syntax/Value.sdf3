@@ -10,10 +10,6 @@ context-free syntax
   
   Val.C = < <C> >
   Val.Func = < func( <ID*> ) { return <Exp> }>
-  Val.Obj = < { <FieldList> } >
+  Val.Obj = < { <{Field ","}*> } >
   
-  FieldList.Empty = 
-  FieldList.NonEmpty = < <Field> <FieldRest*> >
-  
-  Field.Prop = < <STRING> : <Val> > 
-  FieldRest.PropRest = < , <STRING> : <Val> > 
+  Field.Prop = < <STRING> : <Val> >
