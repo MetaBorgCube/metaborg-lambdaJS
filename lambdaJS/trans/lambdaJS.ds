@@ -42,6 +42,11 @@ signature
 		
 		E |- bindVar(x, v) --> {x |--> v, E}
 
+		//TODO: init rule -> adjust to list of exps
+		Program(e) -init-> v
+		where
+			e --> v
+
 		Get(e1, e2) --> v
 		where
 			e1 --> ObjV(O);
