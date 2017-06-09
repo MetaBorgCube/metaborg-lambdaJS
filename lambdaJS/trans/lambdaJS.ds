@@ -32,53 +32,54 @@ signature
 		
 		Start -init-> V
 		Exp --> V
-		V --> V
 
 	rules
 
-		O |- bindProperty(name, v) --> {name |--> v, O}	
-		O |- removeProperty(name) --> O \ name
-		O |- getProperty(name) --> O[name]
-		
-		E |- bindVar(x, v) --> {x |--> v, E}
+//		O |- bindProperty(name, v) --> {name |--> v, O}	
+//		O |- removeProperty(name) --> O \ name
+//		O |- getProperty(name) --> O[name]
+//		
+//		E |- bindVar(x, v) --> {x |--> v, E}
 
 		//TODO: init rule -> adjust to list of exps
 		Program(e) -init-> v
 		where
 			e --> v
+			
+		Value(C(i)) --> StrV(i)
 
-		Get(e1, e2) --> v
-		where
-			e1 --> ObjV(O);
-			e2 --> StrV(name);
-			case O[name?] of {
-				true =>
-					O |- getProperty(name) --> v		
-				false =>
-					StrV("undefined") --> v
-			}
-
-
-		Instantiation(e1, e2, e3) --> ObjV(obj2)
-		where
-			e1 --> ObjV(O);
-			e2 --> StrV(name);
-			e3 --> v1;
-			O |- bindProperty(name, v1) --> obj2		
-
-		
-		Delete(e1, e2) --> ObjV(obj2)
-		where
-			e1 --> ObjV(O);
-			e2 --> StrV(name);
-			case O[name?] of {
-				true =>
-					O |- removeProperty(name) --> obj2		
-				false =>
-					e1 --> ObjV(obj2)	
-			}
-	
-		Let(x, v1, e2) --> v2
-  		where
-			E bindVar(x, v1) |- e2 --> v2
-	
+//		Get(e1, e2) --> v
+//		where
+//			e1 --> ObjV(O);
+//			e2 --> StrV(name);
+//			case O[name?] of {
+//				true =>
+//					O |- getProperty(name) --> v		
+//				false =>
+//					StrV("undefined") => v
+//			}
+//
+//
+//		Instantiation(e1, e2, e3) --> ObjV(obj2)
+//		where
+//			e1 --> ObjV(O);
+//			e2 --> StrV(name);
+//			e3 --> v1;
+//			O |- bindProperty(name, v1) --> obj2		
+//
+//		
+//		Delete(e1, e2) --> ObjV(obj2)
+//		where
+//			e1 --> ObjV(O);
+//			e2 --> StrV(name);
+//			case O[name?] of {
+//				true =>
+//					O |- removeProperty(name) --> obj2		
+//				false =>
+//					e1 --> ObjV(obj2)	
+//			}
+//	
+//		Let(x, v1, e2) --> v2
+//  		where
+//			E bindVar(x, v1) |- e2 --> v2
+//	
