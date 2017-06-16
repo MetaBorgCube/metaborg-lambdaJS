@@ -10,6 +10,10 @@ signature
 	constructors
 		ObjV : Map(String,V) -> V
 		StrV : String -> V
+		NumV : INT -> V
+		BoolV : BOOLEAN -> V
+		UndefV : V
+		NullV : V
 		ClosV : Env * List(String) * Exp -> V 
 
 	sort aliases
@@ -46,7 +50,15 @@ signature
 		where
 			e --> v
 			
-		Value(C(i)) --> StrV(i)
+		Value(INT(i)) --> NumV(i)
+		
+		Value(BOOLEAN(i)) --> BoolV(i)
+		
+		Value(UNDEFINED(_)) --> UndefV()
+		
+		Value(NULL(_)) --> NullV()
+		
+		Value(STRING(i)) --> StrV(i)
 
 //		Get(e1, e2) --> v
 //		where

@@ -4,7 +4,6 @@ lexical syntax
 // x is defined as ID
   ID             = [a-zA-Z\_\$] [a-zA-Z0-9\_\$]* 
 
-  C				 = INT | BOOLEAN | UNDEFINED | NULL | STRING
   INT            = "-"? [0-9]+ 
   BOOLEAN		 = "true" | "false"
   UNDEFINED		 = "undefined"
