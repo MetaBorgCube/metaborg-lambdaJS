@@ -29,6 +29,7 @@ signature
   
   	arrows
 		bindVar(String, V) --> Env
+		readVar(String) --> V
 		
 		bindProperty(V, V) --> Map(V,V)
 		removeProperty(V) --> Map(V,V)
@@ -41,11 +42,12 @@ signature
 		Field --> V
 
 	rules
-		O |- bindProperty(v1, v2) --> {O, v1 |--> v2}	
+		O |- bindProperty(v1, v2) --> {v1 |--> v2, O}	
 		O |- removeProperty(strv) --> O \ strv
 		O |- getProperty(strv) --> O[strv]
 
-//		E |- bindVar(x, v) --> {x |--> v, E}
+		E |- bindVar(name, v) --> {name |--> v, E}
+		E |- readVar(name) --> E[name]
 
 		//TODO: init rule -> adjust to list of exps
 		Program(e) -init-> v
@@ -65,6 +67,11 @@ signature
 		NULL(_) --> NullV()
 		
 		STRING(i) --> StrV(i)
+		
+		//TODO: check if id exists?
+		E |- Identifier(name) --> v
+		where
+			E |- readVar(name) --> v
 		
 		Obj(propList) --> ObjV(obj)
 		where
@@ -93,13 +100,12 @@ signature
 					UndefV() => v2
 			}
 
-
-//		Instantiation(e1, e2, e3) --> ObjV(obj2)
-//		where
-//			e1 --> ObjV(O);
-//			e2 --> StrV(name);
-//			e3 --> v1;
-//			O |- bindProperty(name, v1) --> obj2		
+		Instantiation(e1, e2, e3) --> ObjV(obj2)
+		where
+			e1 --> ObjV(O);
+			e2 --> v1;
+			e3 --> v2;
+			O |- bindProperty(v1, v2) --> obj2
 		
 		Delete(e1, e2) --> ObjV(obj2)
 		where
@@ -112,7 +118,9 @@ signature
 					O => obj2	
 			}
 	
-//		Let(x, v1, e2) --> v2
-//  		where
-//			E bindVar(x, v1) |- e2 --> v2
-//	
+		Let(x, e1, e2) --> v2
+  		where
+  			e1 --> v1;
+  			bindVar(x, v1) --> E2;
+			E E2|- e2 --> v2
+	
