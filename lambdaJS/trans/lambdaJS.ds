@@ -8,7 +8,7 @@ signature
 		V
 
 	constructors
-		ObjV : Map(String,V) -> V
+		ObjV : Map(V,V) -> V
 		StrV : String -> V
 		NumV : INT -> V
 		BoolV : BOOLEAN -> V
@@ -22,7 +22,7 @@ signature
 
 	components
 		E : Env
-		O : Map(String,V)
+		O : Map(V,V)
 		
 	variables
 	    v : V
@@ -30,19 +30,21 @@ signature
   	arrows
 		bindVar(String, V) --> Env
 		
-		bindProperty(String, V) --> Map(String,V)
-		removeProperty(String) --> Map(String,V)
-		getProperty(String) --> V
+		bindProperty(V, V) --> Map(V,V)
+		removeProperty(V) --> Map(V,V)
+		getProperty(V) --> V
+		listToObj(List(Field)) --> Map(V,V)
 		
 		Start -init-> V
 		Exp --> V
+		Val --> V
+		Field --> V
 
 	rules
+		O |- bindProperty(v1, v2) --> {O, v1 |--> v2}	
+		O |- removeProperty(strv) --> O \ strv
+		O |- getProperty(strv) --> O[strv]
 
-//		O |- bindProperty(name, v) --> {name |--> v, O}	
-//		O |- removeProperty(name) --> O \ name
-//		O |- getProperty(name) --> O[name]
-//		
 //		E |- bindVar(x, v) --> {x |--> v, E}
 
 		//TODO: init rule -> adjust to list of exps
@@ -50,47 +52,66 @@ signature
 		where
 			e --> v
 			
-		Value(INT(i)) --> NumV(i)
+		Value(e) --> val
+		where
+			e --> val
 		
-		Value(BOOLEAN(i)) --> BoolV(i)
+		INT(i) --> NumV(i)
 		
-		Value(UNDEFINED(_)) --> UndefV()
+		BOOLEAN(i) --> BoolV(i)
 		
-		Value(NULL(_)) --> NullV()
+		UNDEFINED(_) --> UndefV()
 		
-		Value(STRING(i)) --> StrV(i)
+		NULL(_) --> NullV()
+		
+		STRING(i) --> StrV(i)
+		
+		Obj(propList) --> ObjV(obj)
+		where
+			{} => O;
+			O |- listToObj(propList) --> obj
+		
+		Prop(name, _) --> StrV(name)
+		
+		O |- listToObj([]) --> O
+			
+		O |- listToObj([Prop(name, val) | listRest]) --> obj2
+		where
+			Prop(name, val) --> v1;
+			val --> v2;
+			O |- bindProperty(v1,v2) --> O2;
+			O2 |- listToObj(listRest) --> obj2
 
-//		Get(e1, e2) --> v
-//		where
-//			e1 --> ObjV(O);
-//			e2 --> StrV(name);
-//			case O[name?] of {
-//				true =>
-//					O |- getProperty(name) --> v		
-//				false =>
-//					StrV("undefined") => v
-//			}
-//
-//
+		Get(e1, e2) --> v2
+		where
+			e1 --> ObjV(O);
+			e2 --> v1;
+			case O[v1?] of {
+				true =>
+					O |- getProperty(v1) --> v2		
+				false =>
+					UndefV() => v2
+			}
+
+
 //		Instantiation(e1, e2, e3) --> ObjV(obj2)
 //		where
 //			e1 --> ObjV(O);
 //			e2 --> StrV(name);
 //			e3 --> v1;
 //			O |- bindProperty(name, v1) --> obj2		
-//
-//		
-//		Delete(e1, e2) --> ObjV(obj2)
-//		where
-//			e1 --> ObjV(O);
-//			e2 --> StrV(name);
-//			case O[name?] of {
-//				true =>
-//					O |- removeProperty(name) --> obj2		
-//				false =>
-//					e1 --> ObjV(obj2)	
-//			}
-//	
+		
+		Delete(e1, e2) --> ObjV(obj2)
+		where
+			e1 --> ObjV(O);
+			e2 --> v;
+			case O[v?] of {
+				true =>
+					O |- removeProperty(v) --> obj2		
+				false =>
+					O => obj2	
+			}
+	
 //		Let(x, v1, e2) --> v2
 //  		where
 //			E bindVar(x, v1) |- e2 --> v2
