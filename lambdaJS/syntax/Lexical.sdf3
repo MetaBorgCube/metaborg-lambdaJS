@@ -44,6 +44,8 @@ lexical syntax
 	
 	KEYWORD = "ref"
 	KEYWORD = "deref"
+	
+	KEYWORD = "print"
 
 lexical restrictions
 
