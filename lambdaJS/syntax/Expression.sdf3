@@ -16,6 +16,7 @@ context-free syntax
 	Exp.Get = < <Exp> [ <Exp> ] >
 	Exp.Instantiation = < <Exp> [ <Exp> ] = <Exp> >
 	Exp.Delete = < delete <Exp> [ <Exp> ] >
+	Exp.Print = < print(<Exp>) >
 	
 	//Fig 2
 	Exp.Assign = < <ID> = <Exp> >

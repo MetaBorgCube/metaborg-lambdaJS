@@ -15,6 +15,9 @@ signature
 		UndefV : V
 		NullV : V
 		ClosV : List(String) * Exp * Env -> V 
+		
+	native operators
+		printV: V -> V
 
 	sort aliases
 		Env = Map(String, V)
@@ -47,6 +50,8 @@ signature
 		Field --> V
 
 	rules
+		Print(e) --> printV(e)
+	
 		O |- bindProperty(v1, v2) --> {v1 |--> v2, O}	
 		O |- removeProperty(strv) --> O \ strv
 		O |- getProperty(strv) --> O[strv]
@@ -62,8 +67,11 @@ signature
 			E E2 |- bindFuncArgs(args, exps) --> E3
 		
 		//TODO: assign
+		//Assign(id, exp)
 		//TODO: ref
+		//Ref(exp)
 		//TODO: deref
+		//Deref(exp)
 		
 		//TODO: protoyping (adjust get field -> <no proto, no field>, <proto null, no field>, <no field, check proto>)
 		
