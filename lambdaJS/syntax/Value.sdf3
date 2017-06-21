@@ -13,7 +13,7 @@ context-free syntax
   Val.UNDEFINED = < <UNDEFINED> >
   Val.NULL = < <NULL> >
   Val.STRING = < <STRING> >
-  Val.Func = < func( <ID*> ) { return <Exp> }>
+  Val.Func = < func( <{ID ","}*> ) { return <Exp> }>
   Val.Obj = < { <{Field ","}*> } >
   
   Field.Prop = < <STRING> : <Val> >

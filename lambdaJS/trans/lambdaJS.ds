@@ -35,8 +35,9 @@ signature
 		removeProperty(V) --> Map(V,V)
 		getProperty(V) --> V
 		listToObj(List(Field)) --> Map(V,V)
+		evaluate(List(Exp), List(V)) --> List(V)
 		
-		Start -init-> V
+		Start -init-> List(V)
 		Exp --> V
 		Val --> V
 		Field --> V
@@ -48,11 +49,28 @@ signature
 
 		E |- bindVar(name, v) --> {name |--> v, E}
 		E |- readVar(name) --> E[name]
-
-		//TODO: init rule -> adjust to list of exps
-		Program(e) -init-> v
+		
+		//check dynsem definition: 
+		//http://www.metaborg.org/en/latest/source/langdev/meta/lang/dynsem/tutorials/getting-started.html#semantics-of-functions
+		//TODO: function definition
+		//TODO: function application
+		
+		//TODO: assign
+		//TODO: ref
+		//TODO: deref
+		
+		//TODO: protoyping (adjust get field -> <no proto, no field>, <proto null, no field>, <no field, check proto>)
+		
+		Program(e) -init-> vals
 		where
-			e --> v
+			evaluate(e, []) --> vals
+			
+		evaluate([], vals) --> vals
+		
+		evaluate([e | exps], vals) --> newVals
+		where
+			E {} |- e --> v;
+			evaluate(exps, vals ++ [v]) --> newVals
 			
 		Value(e) --> val
 		where
@@ -68,7 +86,6 @@ signature
 		
 		STRING(i) --> StrV(i)
 		
-		//TODO: check if id exists?
 		E |- Identifier(name) --> v
 		where
 			E |- readVar(name) --> v
