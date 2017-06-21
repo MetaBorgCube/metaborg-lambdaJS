@@ -14,7 +14,7 @@ signature
 		BoolV : BOOLEAN -> V
 		UndefV : V
 		NullV : V
-		ClosV : Env * List(String) * Exp -> V 
+		ClosV : List(String) * Exp * Env -> V 
 
 	sort aliases
 		Env = Map(String, V)
@@ -34,7 +34,11 @@ signature
 		bindProperty(V, V) --> Map(V,V)
 		removeProperty(V) --> Map(V,V)
 		getProperty(V) --> V
+		
+		bindFuncArgs(List(String), List(Exp)) --> Env
+		
 		listToObj(List(Field)) --> Map(V,V)
+		
 		evaluate(List(Exp), List(V)) --> List(V)
 		
 		Start -init-> List(V)
@@ -50,10 +54,12 @@ signature
 		E |- bindVar(name, v) --> {name |--> v, E}
 		E |- readVar(name) --> E[name]
 		
-		//check dynsem definition: 
-		//http://www.metaborg.org/en/latest/source/langdev/meta/lang/dynsem/tutorials/getting-started.html#semantics-of-functions
-		//TODO: function definition
-		//TODO: function application
+		E |- bindFuncArgs([], []) --> E
+		E |- bindFuncArgs([arg | args], [e | exps]) --> E3
+		where
+			E |- e --> v;
+			E |- bindVar(arg, v) --> E2;
+			E E2 |- bindFuncArgs(args, exps) --> E3
 		
 		//TODO: assign
 		//TODO: ref
@@ -105,6 +111,8 @@ signature
 			val --> v2;
 			O |- bindProperty(v1,v2) --> O2;
 			O2 |- listToObj(listRest) --> obj2
+			
+		E |- Func(args, e) --> ClosV(args, e, E)
 
 		Get(e1, e2) --> v2
 		where
@@ -140,4 +148,10 @@ signature
   			e1 --> v1;
   			bindVar(x, v1) --> E2;
 			E E2|- e2 --> v2
+			
+		App(e, exps) --> v
+		where
+			e --> ClosV(args, ret, E2);
+			E E2 |- bindFuncArgs(args, exps) --> E3;
+			E3 |- ret --> v
 	
