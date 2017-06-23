@@ -1,0 +1,1 @@
+let (x = b) print({ "a" : false}[a])
