@@ -19,6 +19,6 @@ context-free syntax
 	Exp.Print = < print(<Exp>) >
 	
 	//Fig 2
-	Exp.Assign = < <ID> = <Exp> >
+	Exp.Assign = < <ID> = <Exp> > {longest-match}
 	Exp.Ref = < ref <Exp> >
 	Exp.Deref = < deref <Exp> >

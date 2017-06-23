@@ -14,18 +14,23 @@ signature
 		BoolV : BOOLEAN -> V
 		UndefV : V
 		NullV : V
+		LocV : Int -> V
 		ClosV : List(String) * Exp * Env -> V 
 		
 	native operators
 		printV: V -> V
 
 	sort aliases
+		Address = Int
 		Env = Map(String, V)
-
+		Heap = Map(Address, V)
+		Global = Map(String, Address)
 
 	components
 		E : Env
 		O : Map(V,V)
+		H : Heap
+		G : Global
 		
 	variables
 	    v : V
@@ -37,6 +42,9 @@ signature
 		bindProperty(V, V) --> Map(V,V)
 		removeProperty(V) --> Map(V,V)
 		getProperty(V) --> V
+		
+		bindGlobal(String, Address) --> Global
+		readGlobal(String) --> Address
 		
 		bindFuncArgs(List(String), List(Exp)) --> Env
 		
@@ -66,18 +74,15 @@ signature
 			E |- bindVar(arg, v) --> E2;
 			E E2 |- bindFuncArgs(args, exps) --> E3
 		
-		//TODO: assign
-		//Assign(id, exp)
-		//TODO: ref
-		//Ref(exp)
-		//TODO: deref
-		//Deref(exp)
+		bindGlobal(name, addr) :: G --> {name |--> addr, G}
+		readGlobal(name) :: G --> G[name]
 		
 		//TODO: protoyping (adjust get field -> <no proto, no field>, <proto null, no field>, <no field, check proto>)
+		//TODO: fix ambiguity of ref deref
 		
 		Program(e) -init-> vals
 		where
-			evaluate(e, []) --> vals
+			evaluate(e, []) :: G {}, H {} --> vals
 			
 		evaluate([], vals) --> vals
 		
@@ -100,9 +105,15 @@ signature
 		
 		STRING(i) --> StrV(i)
 		
-		E |- Identifier(name) --> v
+		E |- Identifier(name) :: G, H --> v
 		where
-			E |- readVar(name) --> v
+			case E[name?] of {
+				true =>
+					E |- readVar(name) --> v
+				false =>
+					readGlobal(name) :: G --> addr;
+					H[addr] => v
+			}
 		
 		Obj(propList) --> ObjV(obj)
 		where
@@ -163,3 +174,25 @@ signature
 			E E2 |- bindFuncArgs(args, exps) --> E3;
 			E3 |- ret --> v
 	
+		Assign(id, exp) :: G, H --> v :: G', H {addr |--> v, H'}
+		where
+			case G[id?] of {
+				true =>
+					readGlobal(id) :: G --> addr;
+					G => G'	
+				false =>
+					fresh => addr;
+					bindGlobal(id, addr) :: G --> G'
+			};
+			exp :: H --> v :: H'
+		
+		Ref(exp) :: H --> LocV(addr) :: H {addr |--> v, H'}
+		where
+			exp :: H --> v :: H';
+			fresh => addr
+		
+		Deref(exp) :: H --> v :: H'
+		where
+			exp :: H --> LocV(addr) :: H';
+			H'[addr] => v
+			
