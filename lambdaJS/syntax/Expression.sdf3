@@ -12,7 +12,7 @@ context-free syntax
 	Exp.Identifier = < <ID> >
 	Exp.Value = < <Val> >
 	Exp.Let = < let ( <ID> = <Exp> ) <Exp> > {longest-match}
-	Exp.App = < <Exp> ( <{Exp ","}*> ) > 
+	Exp.App = < <Exp> ( <{Exp ","}*> ) >
 	Exp.Get = < <Exp> [ <Exp> ] >
 	Exp.Instantiation = < <Exp> [ <Exp> ] = <Exp> >
 	Exp.Delete = < delete <Exp> [ <Exp> ] >
@@ -20,5 +20,5 @@ context-free syntax
 	
 	//Fig 2
 	Exp.Assign = < <ID> = <Exp> > {longest-match}
-	Exp.Ref = < ref <Exp> >
+	Exp.Ref = < ref <Exp> > {longest-match}
 	Exp.Deref = < deref <Exp> >

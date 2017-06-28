@@ -15,5 +15,7 @@ context-free syntax
   Val.STRING = < <STRING> >
   Val.Func = < func( <{ID ","}*> ) { return <Exp> }>
   Val.Obj = < { <{Field ","}*> } >
+  Val.Proto = < <PROTO> >
   
   Field.Prop = < <STRING> : <Val> >
+  Field.PropProto = < <PROTO> : <Val> >

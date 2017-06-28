@@ -6,4 +6,51 @@
 //{ "a":1 }
 //x["test"] = 5
 //x = "test"
-1
+
+//let (x = 5) {"a":1}["b"] = x
+//let (x = "c") let (y = 5) {"a":1}[x] = y
+
+//x = {"a":1}
+//deref ref deref ref deref ref deref ref deref ref deref ref deref ref 5
+
+//print(x["a"])
+//x = func(x, y){return 1}(1, 2)
+
+//{"a" : func(){return 1}}["a"]()
+//x = 5
+//ref x
+//deref x
+//x = func(y, z){return y[z]}
+//let(x = func(y, z){return y[z]})
+
+//TODO: fix this ambiguity (deref bracket rule + function application, newline should indicate separation)
+//(deref x)({})
+//(deref x)({})
+
+{"a":1}["b"] //undefined
+{"a":1, "__proto__":null}["b"] //undefined
+{"a":1}["__proto__"] //undefined
+
+a = {"a":1}
+b = {"b":2}
+c = {"c":3}
+
+b["__proto__"] = ref a
+c["__proto__"] = ref b
+
+x = {}
+x["__proto__"] = ref c
+print(x["a"]) //1
+
+y = {"a":1, "b":2, "c":3}
+y["__proto__"] = ref {"a":100}
+print(y["a"])
+delete y["a"]
+print(y["a"])
+
+//TODO: this should only be possible on an object
+//ref 5
+
+//x = {"a":1}
+//x["a"] = 2
+//{"a":1} = {}
