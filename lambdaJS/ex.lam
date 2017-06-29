@@ -47,10 +47,3 @@ y["__proto__"] = ref {"a":100}
 print(y["a"])
 delete y["a"]
 print(y["a"])
-
-//TODO: this should only be possible on an object
-//ref 5
-
-//x = {"a":1}
-//x["a"] = 2
-//{"a":1} = {}

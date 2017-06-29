@@ -91,9 +91,8 @@ signature
 		//TODO: ability to delete proto field?
 		//TODO: in assign check if exp is a ref (to not ignore fresh address made in ref)
 		//TODO: do changes in the object that was used for proto also reflect in the object that has that proto?
-			//if so, ref needs to look up var address (not create fresh)
+			//if so, ref needs to look up global var address (not create fresh)
 		//TODO: add ; to separate expressions (as seen in desugar ef(e...) ) (only for let?)
-		//TODO: deref/ref should only be applied to objects and their locations (need semantics or let desugar handle it?)
 		//TODO: need bracket rule only for deref (this will likely cause problems with function application)
 		
 		Program(e) -init-> vals
@@ -274,9 +273,9 @@ signature
 			};
 			exp :: H --> v :: H'
 		
-		Ref(exp) :: H --> LocV(addr) :: H {addr |--> v, H'}
+		Ref(exp) :: H --> LocV(addr) :: H {addr |--> ObjV(o), H'}
 		where
-			exp :: H --> v :: H';
+			exp :: H --> ObjV(o) :: H';
 			fresh => addr
 		
 		Deref(exp) :: H --> v :: H'
