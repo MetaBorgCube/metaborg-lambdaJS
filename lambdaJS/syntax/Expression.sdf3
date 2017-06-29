@@ -11,13 +11,14 @@ context-free syntax
 	//Fig 1
 	Exp.Identifier = < <ID> >
 	Exp.Value = < <Val> >
-	Exp.Let = < let ( <ID> = <Exp> ) <Exp> > {prefer}	
-	Exp.App = < <Exp> ( <Exp*> ) > 
+	Exp.Let = < let ( <ID> = <Exp> ) <Exp> > {longest-match}
+	Exp.App = < <Exp> ( <{Exp ","}*> ) > 
 	Exp.Get = < <Exp> [ <Exp> ] >
-	Exp.Instantiation = < <Exp> [ <Exp> ] = <Exp> > {prefer}
+	Exp.Instantiation = < <Exp> [ <Exp> ] = <Exp> >
 	Exp.Delete = < delete <Exp> [ <Exp> ] >
+	Exp.Print = < print(<Exp>) >
 	
 	//Fig 2
-	Exp.Assign = < <Exp> = <Exp> >
+	Exp.Assign = < <ID> = <Exp> >
 	Exp.Ref = < ref <Exp> >
 	Exp.Deref = < deref <Exp> >

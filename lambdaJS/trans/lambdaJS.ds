@@ -8,9 +8,16 @@ signature
 		V
 
 	constructors
-		ObjV : Map(String,V) -> V
+		ObjV : Map(V,V) -> V
 		StrV : String -> V
-		ClosV : Env * List(String) * Exp -> V 
+		NumV : INT -> V
+		BoolV : BOOLEAN -> V
+		UndefV : V
+		NullV : V
+		ClosV : List(String) * Exp * Env -> V 
+		
+	native operators
+		printV: V -> V
 
 	sort aliases
 		Env = Map(String, V)
@@ -18,62 +25,141 @@ signature
 
 	components
 		E : Env
-		O : Map(String,V)
+		O : Map(V,V)
 		
 	variables
 	    v : V
   
   	arrows
 		bindVar(String, V) --> Env
+		readVar(String) --> V
 		
-		bindProperty(String, V) --> Map(String,V)
-		removeProperty(String) --> Map(String,V)
-		getProperty(String) --> V
+		bindProperty(V, V) --> Map(V,V)
+		removeProperty(V) --> Map(V,V)
+		getProperty(V) --> V
 		
-		Start -init-> V
+		bindFuncArgs(List(String), List(Exp)) --> Env
+		
+		listToObj(List(Field)) --> Map(V,V)
+		
+		evaluate(List(Exp), List(V)) --> List(V)
+		
+		Start -init-> List(V)
 		Exp --> V
-		V --> V
+		Val --> V
+		Field --> V
 
 	rules
+		Print(e) --> printV(e)
+	
+		O |- bindProperty(v1, v2) --> {v1 |--> v2, O}	
+		O |- removeProperty(strv) --> O \ strv
+		O |- getProperty(strv) --> O[strv]
 
-		O |- bindProperty(name, v) --> {name |--> v, O}	
-		O |- removeProperty(name) --> O \ name
-		O |- getProperty(name) --> O[name]
+		E |- bindVar(name, v) --> {name |--> v, E}
+		E |- readVar(name) --> E[name]
 		
-		E |- bindVar(x, v) --> {x |--> v, E}
+		E |- bindFuncArgs([], []) --> E
+		E |- bindFuncArgs([arg | args], [e | exps]) --> E3
+		where
+			E |- e --> v;
+			E |- bindVar(arg, v) --> E2;
+			E E2 |- bindFuncArgs(args, exps) --> E3
+		
+		//TODO: assign
+		//Assign(id, exp)
+		//TODO: ref
+		//Ref(exp)
+		//TODO: deref
+		//Deref(exp)
+		
+		//TODO: protoyping (adjust get field -> <no proto, no field>, <proto null, no field>, <no field, check proto>)
+		
+		Program(e) -init-> vals
+		where
+			evaluate(e, []) --> vals
+			
+		evaluate([], vals) --> vals
+		
+		evaluate([e | exps], vals) --> newVals
+		where
+			E {} |- e --> v;
+			evaluate(exps, vals ++ [v]) --> newVals
+			
+		Value(e) --> val
+		where
+			e --> val
+		
+		INT(i) --> NumV(i)
+		
+		BOOLEAN(i) --> BoolV(i)
+		
+		UNDEFINED(_) --> UndefV()
+		
+		NULL(_) --> NullV()
+		
+		STRING(i) --> StrV(i)
+		
+		E |- Identifier(name) --> v
+		where
+			E |- readVar(name) --> v
+		
+		Obj(propList) --> ObjV(obj)
+		where
+			{} => O;
+			O |- listToObj(propList) --> obj
+		
+		Prop(name, _) --> StrV(name)
+		
+		O |- listToObj([]) --> O
+			
+		O |- listToObj([Prop(name, val) | listRest]) --> obj2
+		where
+			Prop(name, val) --> v1;
+			val --> v2;
+			O |- bindProperty(v1,v2) --> O2;
+			O2 |- listToObj(listRest) --> obj2
+			
+		E |- Func(args, e) --> ClosV(args, e, E)
 
-		Get(e1, e2) --> v
+		Get(e1, e2) --> v2
 		where
 			e1 --> ObjV(O);
-			e2 --> StrV(name);
-			case O[name?] of {
+			e2 --> v1;
+			case O[v1?] of {
 				true =>
-					O |- getProperty(name) --> v		
+					O |- getProperty(v1) --> v2		
 				false =>
-					StrV("undefined") --> v
+					UndefV() => v2
 			}
-
 
 		Instantiation(e1, e2, e3) --> ObjV(obj2)
 		where
 			e1 --> ObjV(O);
-			e2 --> StrV(name);
-			e3 --> v1;
-			O |- bindProperty(name, v1) --> obj2		
-
+			e2 --> v1;
+			e3 --> v2;
+			O |- bindProperty(v1, v2) --> obj2
 		
 		Delete(e1, e2) --> ObjV(obj2)
 		where
 			e1 --> ObjV(O);
-			e2 --> StrV(name);
-			case O[name?] of {
+			e2 --> v;
+			case O[v?] of {
 				true =>
-					O |- removeProperty(name) --> obj2		
+					O |- removeProperty(v) --> obj2		
 				false =>
-					e1 --> ObjV(obj2)	
+					O => obj2	
 			}
 	
-		Let(x, v1, e2) --> v2
+		Let(x, e1, e2) --> v2
   		where
-			E bindVar(x, v1) |- e2 --> v2
+  			e1 --> v1;
+  			bindVar(x, v1) --> E2;
+			E E2|- e2 --> v2
+			
+		App(e, exps) --> v
+		where
+			e --> ClosV(args, ret, E2);
+			E E2 |- bindFuncArgs(args, exps) --> E3;
+			E3 |- ret --> v
 	

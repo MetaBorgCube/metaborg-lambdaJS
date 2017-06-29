@@ -8,8 +8,12 @@ imports
 
 context-free syntax
   
-  Val.C = < <C> >
-  Val.Func = < func( <ID*> ) { return <Exp> }>
+  Val.INT = < <INT> >
+  Val.BOOLEAN = < <BOOLEAN> >
+  Val.UNDEFINED = < <UNDEFINED> >
+  Val.NULL = < <NULL> >
+  Val.STRING = < <STRING> >
+  Val.Func = < func( <{ID ","}*> ) { return <Exp> }>
   Val.Obj = < { <{Field ","}*> } >
   
   Field.Prop = < <STRING> : <Val> >

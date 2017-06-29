@@ -1,0 +1,3 @@
+#! /bin/sh
+
+MAVEN_OPTS="" mvn exec:java -Dexec.mainClass=org.metaborg.lambdaJS.interpreter.generated.lambdaJSRunner -Dexec.args="$1"
