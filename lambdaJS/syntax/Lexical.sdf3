@@ -8,9 +8,10 @@ lexical syntax
   BOOLEAN		 = "true" | "false"
   UNDEFINED		 = "undefined"
   NULL			 = "null"
+  PROTO	 		 = "\"__proto__\""
   
-  //TODO?: string correct?
   STRING         = "\"" StringChar* "\"" 
+  STRING	 	 = "\"__proto__\"" {reject}
   StringChar     = ~[\"\n] 
   StringChar     = "\\\"" 
   StringChar     = BackSlashChar 
@@ -18,7 +19,6 @@ lexical syntax
   
   LAYOUT         = [\ \t\n\r] 
   
-  //TODO?: comments correct?
   CommentChar    = [\*] 
   LAYOUT         = "/*" InsideComment* "*/" 
   InsideComment  = ~[\*] 
@@ -46,6 +46,8 @@ lexical syntax
 	KEYWORD = "deref"
 	
 	KEYWORD = "print"
+	
+	KEYWORD = "__proto__"
 
 lexical restrictions
 

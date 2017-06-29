@@ -14,18 +14,26 @@ signature
 		BoolV : BOOLEAN -> V
 		UndefV : V
 		NullV : V
+		ProtoV : V
+		LocV : Int -> V
+		LocWrap : V -> Exp
+		ObjWrap : V -> Exp
 		ClosV : List(String) * Exp * Env -> V 
 		
 	native operators
 		printV: V -> V
 
 	sort aliases
+		Address = Int
 		Env = Map(String, V)
-
+		Heap = Map(Address, V)
+		Global = Map(String, Address)
 
 	components
 		E : Env
 		O : Map(V,V)
+		H : Heap
+		G : Global
 		
 	variables
 	    v : V
@@ -38,7 +46,12 @@ signature
 		removeProperty(V) --> Map(V,V)
 		getProperty(V) --> V
 		
+		bindGlobal(String, Address) --> Global
+		readGlobal(String) --> Address
+		
 		bindFuncArgs(List(String), List(Exp)) --> Env
+		
+		setRef(Address, V) --> Heap
 		
 		listToObj(List(Field)) --> Map(V,V)
 		
@@ -66,18 +79,25 @@ signature
 			E |- bindVar(arg, v) --> E2;
 			E E2 |- bindFuncArgs(args, exps) --> E3
 		
-		//TODO: assign
-		//Assign(id, exp)
-		//TODO: ref
-		//Ref(exp)
-		//TODO: deref
-		//Deref(exp)
+		bindGlobal(name, addr) :: G --> {name |--> addr, G}
+		readGlobal(name) :: G --> G[name]
 		
-		//TODO: protoyping (adjust get field -> <no proto, no field>, <proto null, no field>, <no field, check proto>)
+		setRef(addr, v) :: H --> {addr |--> v, H}
+		
+		//dirty way of passing values as expressions
+		LocWrap(LocV(addr)) --> LocV(addr)
+		ObjWrap(ObjV(o)) --> ObjV(o)
+		
+		//TODO: ability to delete proto field?
+		//TODO: in assign check if exp is a ref (to not ignore fresh address made in ref)
+		//TODO: do changes in the object that was used for proto also reflect in the object that has that proto?
+			//if so, ref needs to look up global var address (not create fresh)
+		//TODO: add ; to separate expressions (as seen in desugar ef(e...) ) (only for let?)
+		//TODO: need bracket rule only for deref (this will likely cause problems with function application)
 		
 		Program(e) -init-> vals
 		where
-			evaluate(e, []) --> vals
+			evaluate(e, []) :: G {}, H {} --> vals
 			
 		evaluate([], vals) --> vals
 		
@@ -98,11 +118,19 @@ signature
 		
 		NULL(_) --> NullV()
 		
+		Proto(_) --> ProtoV()
+		
 		STRING(i) --> StrV(i)
 		
-		E |- Identifier(name) --> v
+		E |- Identifier(name) :: G, H --> v
 		where
-			E |- readVar(name) --> v
+			case E[name?] of {
+				true =>
+					E |- readVar(name) --> v
+				false =>
+					readGlobal(name) :: G --> addr;
+					H[addr] => v
+			}
 		
 		Obj(propList) --> ObjV(obj)
 		where
@@ -119,36 +147,106 @@ signature
 			val --> v2;
 			O |- bindProperty(v1,v2) --> O2;
 			O2 |- listToObj(listRest) --> obj2
+		
+		O |- listToObj([PropProto(_, val) | listRest]) --> obj2
+		where
+			val --> v;
+			case v of{
+				LocV(_) =>
+					O |- bindProperty(ProtoV(),v) --> O2;
+					O2 |- listToObj(listRest) --> obj2
+				NullV() =>
+					O |- bindProperty(ProtoV(),v) --> O2;
+					O2 |- listToObj(listRest) --> obj2
+			}
 			
 		E |- Func(args, e) --> ClosV(args, e, E)
 
-		Get(e1, e2) --> v2
+		Get(e1, e2) --> vout
 		where
 			e1 --> ObjV(O);
-			e2 --> v1;
-			case O[v1?] of {
+			e2 --> ProtoV();
+			case O[ProtoV()?] of {
 				true =>
-					O |- getProperty(v1) --> v2		
+					O |- getProperty(ProtoV()) --> v;
+					case v of {
+						NullV() =>
+							UndefV() => vout
+						LocV(addr) =>
+							LocV(addr) => vout
+					}		
 				false =>
-					UndefV() => v2
+					UndefV() => vout
 			}
 
-		Instantiation(e1, e2, e3) --> ObjV(obj2)
+		Get(e1, e2) --> vout
 		where
 			e1 --> ObjV(O);
-			e2 --> v1;
-			e3 --> v2;
-			O |- bindProperty(v1, v2) --> obj2
-		
-		Delete(e1, e2) --> ObjV(obj2)
-		where
-			e1 --> ObjV(O);
-			e2 --> v;
-			case O[v?] of {
+			e2 --> StrV(str);
+			case O[StrV(str)?] of {
 				true =>
-					O |- removeProperty(v) --> obj2		
+					O |- getProperty(StrV(str)) --> vout		
+				false =>
+					case O[ProtoV()?] of {
+						true =>
+							O |- getProperty(ProtoV()) --> v;
+							case v of {
+								NullV() =>
+									UndefV() => vout
+								LocV(addr) =>
+									Deref(LocWrap(LocV(addr))) --> obj;
+									Get(ObjWrap(obj), e2) --> vout
+							}
+						false =>
+							UndefV() => vout
+					}
+			}
+		
+		Instantiation(e1, e2, e3) :: G, H --> ObjV(obj2) :: G, H''''
+		where
+			e1 :: H --> ObjV(O) ::H';
+			e2 :: H' --> v1 :: H'';
+			e3 :: H'' --> v2 :: H''';
+			case v1 of {
+				ProtoV() =>
+					O |- bindProperty(v1, v2) --> obj2
+				StrV(_) =>
+					O |- bindProperty(v1, v2) --> obj2
+			};
+			case e1 of {
+				Identifier(id) =>
+					case G[id?] of {
+						true =>
+							readGlobal(id) --> addr;
+							setRef(addr, ObjV(obj2)) :: H''' --> H''''
+						false =>
+							H''' => H''''
+					}
+				_ =>
+					H''' => H''''
+			}
+		
+		Delete(e1, e2) :: G, H --> ObjV(obj2) :: G, H'''
+		where
+			e1 :: H --> ObjV(O) :: H';
+			e2 :: H' --> StrV(str) :: H'';
+			case O[StrV(str)?] of {
+				true =>
+					O |- removeProperty(StrV(str)) --> obj2		
 				false =>
 					O => obj2	
+			};
+			case e1 of {
+				Identifier(id) =>
+					case G[id?] of {
+						true =>
+							readGlobal(id) --> addr;
+							setRef(addr, ObjV(obj2)) :: H'' --> H'''
+						false =>
+							H'' => H'''
+					}
+				_ =>
+					H'' => H'''
 			}
 	
 		Let(x, e1, e2) --> v2
@@ -163,3 +261,25 @@ signature
 			E E2 |- bindFuncArgs(args, exps) --> E3;
 			E3 |- ret --> v
 	
+		Assign(id, exp) :: G, H --> v :: G', H {addr |--> v, H'}
+		where
+			case G[id?] of {
+				true =>
+					readGlobal(id) :: G --> addr;
+					G => G'	
+				false =>
+					fresh => addr;
+					bindGlobal(id, addr) :: G --> G'
+			};
+			exp :: H --> v :: H'
+		
+		Ref(exp) :: H --> LocV(addr) :: H {addr |--> ObjV(o), H'}
+		where
+			exp :: H --> ObjV(o) :: H';
+			fresh => addr
+		
+		Deref(exp) :: H --> v :: H'
+		where
+			exp :: H --> LocV(addr) :: H';
+			H'[addr] => v
+			
