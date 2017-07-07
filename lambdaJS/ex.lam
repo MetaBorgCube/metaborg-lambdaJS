@@ -1,7 +1,15 @@
-//TODO: fix function in let
-let(fu = func(a){return a})
-	let(aa = "a")
-		print(fu(aa));
+fun = func(a){return a};
+let(blah = 10)
+	print(fun(blah));
+
+let(fu = func(a, b){return a[b]})
+	let(aa = {"b":1})
+		let(bb = "b")
+			print(fu(aa,bb));
+
+objRef = ref {"a":func(){return "something"}};
+res = (deref objRef)["a"]();
+print(res);
 
 {"a":1}["b"]; //undefined
 {"a":1, "__proto__":null}["b"]; //undefined

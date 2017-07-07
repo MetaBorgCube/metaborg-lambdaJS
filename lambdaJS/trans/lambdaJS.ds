@@ -92,8 +92,6 @@ signature
 		//TODO: in assign check if exp is a ref (to not ignore fresh address made in ref)
 		//TODO: do changes in the object that was used for proto also reflect in the object that has that proto?
 			//if so, ref needs to look up global var address (not create fresh)
-		//TODO: add ; to separate expressions (as seen in desugar ef(e...) ) (only for let?)
-		//TODO: need bracket rule only for deref (this will likely cause problems with function application)
 		
 		Program(e) -init-> vals
 		where
@@ -222,7 +220,7 @@ signature
 						false =>
 							H''' => H''''
 					}
-				_ =>
+				otherwise =>
 					H''' => H''''
 			}
 		
@@ -245,7 +243,7 @@ signature
 						false =>
 							H'' => H'''
 					}
-				_ =>
+				otherwise =>
 					H'' => H'''
 			}
 	
@@ -255,10 +253,10 @@ signature
   			bindVar(x, v1) --> E2;
 			E E2|- e2 --> v2
 			
-		App(e, exps) --> v
+		E |- App(e, exps) --> v
 		where
 			e --> ClosV(args, ret, E2);
-			E E2 |- bindFuncArgs(args, exps) --> E3;
+			E {E, E2} |- bindFuncArgs(args, exps) --> E3;
 			E3 |- ret --> v
 	
 		Assign(id, exp) :: G, H --> v :: G', H {addr |--> v, H'}
