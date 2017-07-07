@@ -1,2 +1,2 @@
 let (x = { "a" : 1}) 
-print(x["b"])
+	print(x["b"]);

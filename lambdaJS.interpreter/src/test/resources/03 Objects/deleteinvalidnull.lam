@@ -1,1 +1,1 @@
-print(delete {"a" : 1}[null])
+print(delete {"a" : 1}[null]);

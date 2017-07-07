@@ -1,1 +1,1 @@
-print({"a" : 1}["b"] = {"x" : true})
+print({"a" : 1}["b"] = {"x" : true});

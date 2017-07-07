@@ -1,1 +1,2 @@
-let (x = b) print({ "a" : false}[a])
+let (x = b) 
+	print({ "a" : false}[a]);

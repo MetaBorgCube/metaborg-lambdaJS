@@ -9,10 +9,12 @@ imports
 context-free syntax
 
 	//Fig 1
+	Exp = <(<Exp>)> {bracket}
+	Exp = < <Exp>; >
 	Exp.Identifier = < <ID> >
 	Exp.Value = < <Val> >
 	Exp.Let = < let ( <ID> = <Exp> ) <Exp> > {longest-match}
-	Exp.App = < <Exp> ( <{Exp ","}*> ) >
+	Exp.App = < <Exp> ( <{Exp ","}*> ) > {prefer}
 	Exp.Get = < <Exp> [ <Exp> ] >
 	Exp.Instantiation = < <Exp> [ <Exp> ] = <Exp> >
 	Exp.Delete = < delete <Exp> [ <Exp> ] >

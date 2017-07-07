@@ -1,1 +1,1 @@
-print(delete {"a" : 1}[undefined])
+print(delete {"a" : 1}[undefined]);
