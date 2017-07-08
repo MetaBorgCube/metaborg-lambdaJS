@@ -1,1 +1,1 @@
-print({"a" : 1}[true])
+print({"a" : 1}[true]);

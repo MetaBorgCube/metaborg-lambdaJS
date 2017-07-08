@@ -63,6 +63,7 @@ signature
 		Field --> V
 
 	rules
+		//Not in the paper, but necessary to give output for tests
 		Print(e) --> printV(e)
 	
 		O |- bindProperty(v1, v2) --> {v1 |--> v2, O}	
@@ -87,13 +88,6 @@ signature
 		//dirty way of passing values as expressions
 		LocWrap(LocV(addr)) --> LocV(addr)
 		ObjWrap(ObjV(o)) --> ObjV(o)
-		
-		//TODO: ability to delete proto field?
-		//TODO: in assign check if exp is a ref (to not ignore fresh address made in ref)
-		//TODO: do changes in the object that was used for proto also reflect in the object that has that proto?
-			//if so, ref needs to look up global var address (not create fresh)
-		//TODO: add ; to separate expressions (as seen in desugar ef(e...) ) (only for let?)
-		//TODO: need bracket rule only for deref (this will likely cause problems with function application)
 		
 		Program(e) -init-> vals
 		where
@@ -148,6 +142,7 @@ signature
 			O |- bindProperty(v1,v2) --> O2;
 			O2 |- listToObj(listRest) --> obj2
 		
+		//Special case for proto property in object
 		O |- listToObj([PropProto(_, val) | listRest]) --> obj2
 		where
 			val --> v;
@@ -161,7 +156,9 @@ signature
 			}
 			
 		E |- Func(args, e) --> ClosV(args, e, E)
-
+		
+		//Special case where explicitly a get is done for proto, 
+		//which will return a LocV or UndefV instead of a normal value
 		Get(e1, e2) --> vout
 		where
 			e1 --> ObjV(O);
@@ -179,6 +176,7 @@ signature
 					UndefV() => vout
 			}
 
+		//Fig.1 E-GETFIELD, Fig.4 E-GETFIELD-NOTFOUND, E-GETFIELD-PROTO, E-GETFIELD-PROTO-NULL
 		Get(e1, e2) --> vout
 		where
 			e1 --> ObjV(O);
@@ -202,6 +200,7 @@ signature
 					}
 			}
 		
+		//Fig.1 E-UPDATEFIELD, E-CREATEFIELD
 		Instantiation(e1, e2, e3) :: G, H --> ObjV(obj2) :: G, H''''
 		where
 			e1 :: H --> ObjV(O) ::H';
@@ -222,10 +221,11 @@ signature
 						false =>
 							H''' => H''''
 					}
-				_ =>
+				otherwise =>
 					H''' => H''''
 			}
 		
+		//Fig.1 E-DELETEFIELD, E-DELETEFIELD-NOTFOUND
 		Delete(e1, e2) :: G, H --> ObjV(obj2) :: G, H'''
 		where
 			e1 :: H --> ObjV(O) :: H';
@@ -245,22 +245,25 @@ signature
 						false =>
 							H'' => H'''
 					}
-				_ =>
+				otherwise =>
 					H'' => H'''
 			}
 	
+		//Fig.1 E-LET
 		Let(x, e1, e2) --> v2
   		where
   			e1 --> v1;
   			bindVar(x, v1) --> E2;
 			E E2|- e2 --> v2
 			
-		App(e, exps) --> v
+		//Fig.1 E-APP
+		E |- App(e, exps) --> v
 		where
 			e --> ClosV(args, ret, E2);
-			E E2 |- bindFuncArgs(args, exps) --> E3;
+			E {E, E2} |- bindFuncArgs(args, exps) --> E3;
 			E3 |- ret --> v
 	
+		//Fig.2 E-SETREF
 		Assign(id, exp) :: G, H --> v :: G', H {addr |--> v, H'}
 		where
 			case G[id?] of {
@@ -273,11 +276,13 @@ signature
 			};
 			exp :: H --> v :: H'
 		
+		//Fig.2 E-REF
 		Ref(exp) :: H --> LocV(addr) :: H {addr |--> ObjV(o), H'}
 		where
 			exp :: H --> ObjV(o) :: H';
 			fresh => addr
 		
+		//Fig.2 E-DEREF
 		Deref(exp) :: H --> v :: H'
 		where
 			exp :: H --> LocV(addr) :: H';

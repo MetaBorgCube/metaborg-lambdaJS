@@ -1,2 +1,2 @@
 let (x = { "a" : false}) 
-print(x["a"])
+	print(x["a"]);

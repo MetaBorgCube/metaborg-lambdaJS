@@ -1,1 +1,1 @@
-print(delete true["a"])
+print(delete true["a"]);

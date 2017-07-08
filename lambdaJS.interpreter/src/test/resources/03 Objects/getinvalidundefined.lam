@@ -1,1 +1,1 @@
-print({"a" : 1}[undefined])
+print({"a" : 1}[undefined]);

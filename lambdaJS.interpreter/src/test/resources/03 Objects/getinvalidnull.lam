@@ -1,1 +1,1 @@
-print({"a" : 1}[null])
+print({"a" : 1}[null]);

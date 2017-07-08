@@ -1,1 +1,1 @@
-print(delete {"a" : 1}[false])
+print(delete {"a" : 1}[false]);
