@@ -1,7 +1,14 @@
 
-/target/
+/bin
+/target
+/.project
+/.classpath
+/.settings
+/.factorypath
+file:///Users/vladvergu/tud/slde/software/languages/nonmeta/metaborg-lambdaJS/lambdaJS.interpreter/src/main/resources/signatures-digest.cache
 src/main/resources/specification.aterm
 src/main/resources/parsetable.tbl
+src/main/resources/logback.xml
 src/main/java/org/metaborg/lambdaJS/interpreter/generated
 src/main/java/org/metaborg/lambdaJS/interpreter/generated/terms
 src/main/java/org/metaborg/lambdaJS/interpreter/generated/terms/build
@@ -9,7 +16,9 @@ src/main/java/org/metaborg/lambdaJS/interpreter/generated/terms/match
 src/test/java/org/metaborg/lambdaJS/interpreter/generated/test
 /lambdaJS.launch
 /TestlambdaJS.launch
+/lambdaJS (Core).launch
 /lambdaJS (Daemon).launch
+/lambdaJS-core
 /lambdaJS-server
 /lambdaJS-client
 /lambdaJS
