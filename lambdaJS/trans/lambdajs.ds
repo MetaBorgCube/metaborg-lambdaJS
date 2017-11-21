@@ -1,7 +1,7 @@
-module trans/lambdaJS
+module trans/lambdajs
 
 imports
-src-gen/ds-signatures/lambdaJS-sig
+  src-gen/ds-signatures/lambdaJS-sig
 
 signature
 	sorts
